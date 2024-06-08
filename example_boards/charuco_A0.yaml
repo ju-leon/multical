@@ -13,6 +13,8 @@ boards:
 
     aruco_offset: 0
 
+    legacy: True
+
   charuco_A0_1:
     size: [16, 24]
     aruco_dict: '5X5_1000'

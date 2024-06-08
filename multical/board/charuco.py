@@ -10,12 +10,14 @@ from multical.optimization.parameters import Parameters
 
 class CharucoBoard(Parameters, Board):
   def __init__(self, size, square_length, marker_length, min_rows=3, min_points=20, 
-    adjusted_points=None, aruco_params=None, aruco_dict='4X4_100', aruco_offset=0):
+    adjusted_points=None, aruco_params=None, aruco_dict='4X4_100', aruco_offset=0, legacy=False):
     
     self.aruco_dict = aruco_dict
     self.aruco_offset = aruco_offset 
 
     self.size = tuple(size)
+
+    self.legacy = legacy
 
     self.marker_length = marker_length
     self.square_length = square_length
@@ -31,8 +33,13 @@ class CharucoBoard(Parameters, Board):
   def board(self):
     aruco_dict = create_dict(self.aruco_dict, self.aruco_offset)
     width, height = self.size
-    return cv2.aruco.CharucoBoard_create(width, height,
+
+    charuco_board = cv2.aruco.CharucoBoard((width, height),
       self.square_length, self.marker_length, aruco_dict)
+    
+    charuco_board.setLegacyPattern(self.legacy)
+
+    return charuco_board
 
   @cached_property
   def aruco_config(self):
@@ -44,7 +51,7 @@ class CharucoBoard(Parameters, Board):
       aruco_dict=self.aruco_dict,
       aruco_offset=self.aruco_offset,
       size = self.size,
-      num_ids = len(self.board.ids),
+      num_ids = len(self.board.getIds()),
       marker_length = self.marker_length,
       square_length = self.square_length,
       aruco_params = self.aruco_params
@@ -55,7 +62,7 @@ class CharucoBoard(Parameters, Board):
 
   @property
   def points(self):
-    return self.board.chessboardCorners
+    return self.board.getChessboardCorners()
   
   @property
   def num_points(self):

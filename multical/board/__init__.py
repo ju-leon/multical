@@ -25,6 +25,8 @@ class CharucoConfig:
   min_rows : int = 3
   min_points : int = 10
 
+  legacy : bool = False
+
 
 
 @dataclass 
